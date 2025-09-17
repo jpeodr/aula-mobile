@@ -1,33 +1,41 @@
 import {
   SafeAreaView,
+  TextInput,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity
 } from 'react-native';
 
 import { useState } from 'react';
+import { supabase } from '../../src/supabaseClient';
 
 export default function App(){
 
   const [nome, setNome] = useState('');
-  const [idade, setIdade] = useState('');
+  const [email, setEmail] = useState('');
   const [msg, setMsg] = useState('');
 
   const dados = {
     nome: nome,
-    idade: Number(idade),
+    email: email,
     msg: msg
   }
 
   const gravar = () => {
-    window.alert(dados.nome + ' - ' + dados.idade + ' - ' + dados.msg);
+    window.alert(dados.nome + dados.email + dados.msg );
   };
+
+  const enviarDados = async () => {
+    const {data, error } = await supabase
+      .from('contatos')
+      .insert([{nome: dados.nome, email: dados.email, msg: dados.msg}]);
+  }
 
   return(
     <SafeAreaView style={styles.container}>
       <Text style={styles.titulo}>
-        Fale Conosco</Text>
+        Fale Conosco
+      </Text>
 
       <TextInput
         style={styles.input}
@@ -36,58 +44,58 @@ export default function App(){
         onChangeText={setNome}
         autoFocus
       />
-      
+
       <TextInput
         style={styles.input}
-        placeholder='Digite sua idade'
-        value={idade}
-        onChangeText={setIdade}
-        autoFocus
+        placeholder='Digite seu E-mail'
+        value={email}
+        onChangeText={setEmail}
       />
-      
+
       <TextInput
         style={styles.input}
-        placeholder='Deixe sua mensagem'
+        placeholder='Digite sua mensagem'
         value={msg}
         onChangeText={setMsg}
-        autoFocus
       />
-      <TouchableOpacity style={styles.botao} onPress={gravar}> 
-        Cadastrar
+
+      <TouchableOpacity style={styles.botao} onPress={enviarDados} >
+          Cadastrar
       </TouchableOpacity>
+
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   input:{
-    width: '90%',
+    width:'90%',
     height: 45,
-    backgroundColor: '#fff',
+    backgroundColor:'#fff',
     color: '#000',
-    padding: 5,
-    marginBottom: 10,
-    borderRadius: 15
+    padding:5,
+    marginBottom:10
   },
   titulo:{
+    height: 50,
     textAlign: 'center',
+    textAlignVertical: 'center',
+    color: '#fff',
     marginVertical: 10
+
   },
   botao:{
-    width: 100,
-    height:  30,
-    backgroundColor: 'green',
-    color:'white',
-    borderRadius: 15,
-    borderColor:'blue',
-    borderStyle: 'solid',
-    fontSize: 15,
+    backgroundColor:'#246263ff',
+    borderRadius:10,
+    width: '80%',
+    height:45,
+    justifyContent: 'center',
     alignItems: 'center',
-    justifyContent: 'center'
+    fontSize:35,
   },
   container:{
     display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    alignItems: 'center'
   }
-})
+});
